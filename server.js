@@ -115,13 +115,11 @@ function getMostFrequentTags(results) {
     var classes = obj.result.tag.classes;
     var probs = obj.result.tag.probs;
     classes.forEach(function (value, i) {
-      // console.log('%d: %s ', i, value, probs[i]);
       if (!(value in map)) {
         map[value] = probs[i];
       } else {
         map[value] += probs[i];
       }
-      // console.log(map);
     });
     return map;
   }, myMap);
@@ -129,12 +127,11 @@ function getMostFrequentTags(results) {
 }
 
 function tagMultipleURL() {
-  // var testImageURLs = [
-  // "http://www.clarifai.com/img/metro-north.jpg",
-  // "http://www.clarifai.com/img/metro-north.jpg" ];
   var urls = getUserUrls("");
-  var ourIds =  [ "1", "2", "3", "4", "5" ]; // this is any string that identifies the image to your system
-
+  var ourIds = new Array(urls.length);
+  for (var i = 0; i < ourIds.length; i++) {
+    ourIds[i] = i;
+  }
   Clarifai.tagURL( urls , ourIds, commonResultHandler );
 }
 
@@ -170,13 +167,7 @@ var docids = [
 }
 
 function getUserUrls(user_token) {
-  urls = [
-    "https://scontent-sea1-1.xx.fbcdn.net/hphotos-frc3/v/t1.0-9/10574333_790759987622042_5993114939034607283_n.jpg?oh=fd9db529e8aa986039c55063e44749d1&oe=57371CC3",
-    "https://scontent-sea1-1.xx.fbcdn.net/hphotos-xlt1/v/t1.0-9/10462803_790761037621937_5571451144804357940_n.jpg?oh=601612d71f3919fe2b7ec068eff248df&oe=57325CC0",
-    "https://scontent-sea1-1.xx.fbcdn.net/hphotos-xtf1/v/t1.0-9/10557180_790760750955299_3387434584462729996_n.jpg?oh=c01ce65dbff73a2d4b50abec7826c4ed&oe=5700B0B3",
-    "https://scontent-sea1-1.xx.fbcdn.net/hphotos-xpa1/v/t1.0-9/17320_10207245950646020_2831079388823585805_n.jpg?oh=ba68abf463d099da798a83c47f79490d&oe=572D2CFD",
-    "https://scontent-sea1-1.xx.fbcdn.net/hphotos-xfa1/v/t1.0-9/10553454_10152188874706971_2758727942823215891_n.jpg?oh=561bc02a8a777194b8adc9ee1067ce49&oe=5749C7A3"
-  ]
+  var urls = require("./test.json");
   return urls;
 }
 
@@ -239,15 +230,15 @@ function parseExpediaResponse(oResponse) {
   }
 }
 
-request({
-   url: sFinalQuery,
-   json: true
-}, function (error, response, body) {
-   if (!error && response.statusCode === 200) {
-      // console.log(body.result.pois) // Print the json response
-      parseExpediaResponse(body);
-   }
-})
+// request({
+//    url: sFinalQuery,
+//    json: true
+// }, function (error, response, body) {
+//    if (!error && response.statusCode === 200) {
+//       // console.log(body.result.pois) // Print the json response
+//       parseExpediaResponse(body);
+//    }
+// })
 
 
 
