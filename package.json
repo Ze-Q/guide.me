@@ -1,0 +1,24 @@
+{
+  "name": "conuhacks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "dependencies": {
+    "stdio": "^0.2.7"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mathieu-wang/conuhacks.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mathieu-wang/conuhacks/issues"
+  },
+  "homepage": "https://github.com/mathieu-wang/conuhacks"
+}
