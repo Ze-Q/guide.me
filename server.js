@@ -83,6 +83,9 @@ function commonResultHandler( err, res ) {
     var sortedArray = sortMapByValue(map);
     console.log(map);
     console.log(sortedArray);
+    var topTags = getTopNTagsAsString(sortedArray, 10);
+    console.log(topTags);
+    getDestination(topTags);
   }
 }
 
@@ -107,11 +110,8 @@ function sortMapByValue(map) {
 }
 
 function getMostFrequentTags(results) {
-  // console.log(results);
   var myMap = {};
   results.reduce(function (map, obj) {
-    // console.log("MAP: " + map);
-    // console.log("OBJ: " + obj);
     var classes = obj.result.tag.classes;
     var probs = obj.result.tag.probs;
     classes.forEach(function (value, i) {
@@ -135,40 +135,22 @@ function tagMultipleURL() {
   Clarifai.tagURL( urls , ourIds, commonResultHandler );
 }
 
-// exampleFeedback() shows how to send feedback (add or remove tags) from
-// a list of docids. Recall that the docid uniquely identifies an image previously
-// presented for tagging to one of the tag methods.
-function exampleFeedback() {
-// these are docids that just happen to be in the database right now. this test should get
-// upgraded to tag images and use the returned docids.
-var docids = [
-  "15512461224882630000",
-  "9549283504682293000"
-  ];
-  var addTags = [
-  "addTag1",
-  "addTag2"
-  ];
-  Clarifai.feedbackAddTagsToDocids( docids, addTags, null, function( err, res ) {
-    if( opts["print-results"] ) {
-      console.log( res );
-    };
-  } );
-
-  var removeTags = [
-  "removeTag1",
-  "removeTag2"
-  ];
-  Clarifai.feedbackRemoveTagsFromDocids( docids, removeTags, null, function( err, res ) {
-    if( opts["print-results"] ) {
-      console.log( res );
-    };
-  } );
-}
-
 function getUserUrls(user_token) {
   var urls = require("./test.json");
-  return urls;
+  var half_length = Math.ceil(urls.length / 2);
+
+  var leftSide = urls.splice(0,half_length);
+  return leftSide;
+}
+
+function getTopNTagsAsString(array, N) {
+  var result = "";
+  console.log(array.length);
+  for (var i = 0; i < N && i < array.length; i++) {
+    result += array[i][0];
+    result += " ";
+  }
+  return result;
 }
 
 // function tagSinglePhoto() {
@@ -184,20 +166,6 @@ function getUserUrls(user_token) {
 tagMultipleURL();
 // exampleFeedback();
 Clarifai.clearThrottleHandler();
-
-
-var sExpediaKey = "Rb4v7KFeKxU0bTOjqFg9kDTrzZgSQpWc";
-var sExpediaRequestRoot = "http://terminal2.expedia.com/x/nlp/results?q=";
-var sCompleteKey = "&apikey=" + sExpediaKey;
-
-var sQuery1 = "people"+ "landscape "+ "group "+ "daylight "+ "adult "+ "rock "+ "seashore "+ "travel "+ "environment "+ "recreation "+ "tourism "+ "man "+ "mountain "+ "outdoors "+ "many "+ "scenic " + "motion "+ "tourist "+ "sky "+ "adventure ";
-var sQuery2 = "beach "+  "water "+  "people "+  "sea "+  "seashore "+  "travel "+  "ocean "+  "leisure "+  "recreation "+  "sand "+  "group "+  "outdoors "+  "man "+  "adult "+  "daylight "+  "lifestyle "+  "vacation "+  "landscape "+  "sky "+  "summer ";
-var sQuery3 = "indoors "+"window "+"interior design "+"furniture "+"no person "+"room "+"contemporary "+"seat "+"house "+"chair "+"curtain "+"home "+"table "+"luxury "+"wood "+"easy chair "+"apartment "+"architecture "+"rug "+"family"
-var sQuery4 = "architecture winter snow outdoors travel church religion no person sky traditional building cross cold Christmas old tourism Orthodox landmark spirituality city";
-var sQuery5 = "vehicle people competition race group festival many group transportation system adult man track race rally auto racing championship action road woman hurry"
-
-var sFinalQuery = sExpediaRequestRoot + sQuery5 + sCompleteKey
-console.log(sFinalQuery);
 
 function printArray(array) {
   array.forEach(function(element) {
@@ -230,15 +198,30 @@ function parseExpediaResponse(oResponse) {
   }
 }
 
-// request({
-//    url: sFinalQuery,
-//    json: true
-// }, function (error, response, body) {
-//    if (!error && response.statusCode === 200) {
-//       // console.log(body.result.pois) // Print the json response
-//       parseExpediaResponse(body);
-//    }
-// })
+function getDestination(query) {
+  var sExpediaKey = "Rb4v7KFeKxU0bTOjqFg9kDTrzZgSQpWc";
+  var sExpediaRequestRoot = "http://terminal2.expedia.com/x/nlp/results?q=";
+  var sCompleteKey = "&apikey=" + sExpediaKey;
+
+  // var sQuery1 = "people"+ "landscape "+ "group "+ "daylight "+ "adult "+ "rock "+ "seashore "+ "travel "+ "environment "+ "recreation "+ "tourism "+ "man "+ "mountain "+ "outdoors "+ "many "+ "scenic " + "motion "+ "tourist "+ "sky "+ "adventure ";
+  // var sQuery2 = "beach "+  "water "+  "people "+  "sea "+  "seashore "+  "travel "+  "ocean "+  "leisure "+  "recreation "+  "sand "+  "group "+  "outdoors "+  "man "+  "adult "+  "daylight "+  "lifestyle "+  "vacation "+  "landscape "+  "sky "+  "summer ";
+  // var sQuery3 = "indoors "+"window "+"interior design "+"furniture "+"no person "+"room "+"contemporary "+"seat "+"house "+"chair "+"curtain "+"home "+"table "+"luxury "+"wood "+"easy chair "+"apartment "+"architecture "+"rug "+"family"
+  // var sQuery4 = "architecture winter snow outdoors travel church religion no person sky traditional building cross cold Christmas old tourism Orthodox landmark spirituality city";
+  // var sQuery5 = "vehicle people competition race group festival many group transportation system adult man track race rally auto racing championship action road woman hurry"
+
+  var sFinalQuery = sExpediaRequestRoot + query + sCompleteKey
+  console.log(sFinalQuery);
+
+  request({
+     url: sFinalQuery,
+     json: true
+  }, function (error, response, body) {
+     if (!error && response.statusCode === 200) {
+        // console.log(body.result.pois) // Print the json response
+        parseExpediaResponse(body);
+     }
+  })
+}
 
 
 
