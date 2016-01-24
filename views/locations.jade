@@ -4,6 +4,18 @@ block content
   .page-header
     h3 All locations
 
-  each location in locations
-    img(src= location.sImageUrl width="350px" height="350px" style="margin:5px")
+  .row
+    each location in locations
+      .col-md-4
+          .image-wrapper.overlay-fade-in
+            img(src= location.sImageUrl width="350px" height="350px" style="margin:5px")
+            |       
+            .image-overlay-content
+              h2 #{location.sLocation}
+              |         
+              p.price #{location.sPoi}
+              |         
+              a.button(href='#') Get it
+        |   
+    
     

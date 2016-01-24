@@ -174,6 +174,16 @@ exports.getLocations = function(req, res) {
             }
             return result;
           }
+          function contains(array, str) {
+
+            for(var i = 0; i < array.length; i++) {
+              var element = array[i];
+              if (element === str) {
+                return true;
+              }  
+            }
+            return false;
+          }
 
           function getDestination(query) {
             var sExpediaKey = "Rb4v7KFeKxU0bTOjqFg9kDTrzZgSQpWc";
@@ -253,7 +263,6 @@ exports.getLocations = function(req, res) {
             else {
               console.log("Error");
             }
-
             var fnGetImageInfoSuccess = function(oImageInfo, index) {
               // console.log(oImageInfo.photos[0].photo_file_url);
               if (!oImageInfo.photos[0]) {
@@ -264,9 +273,36 @@ exports.getLocations = function(req, res) {
               aLocations[index].sImageUrl = oImageInfo.photos[0].photo_file_url;
               iCounter++;
               if (iCounter === aLocations.length) {
-                printArray(aLocations);
+                var aExistingUrls = [];
+                var aFinalResultLocation = [];
 
-                res.render('locations', {locations: aLocations});
+
+                aLocations.forEach(function(oLocation, j) {
+                  var sCurrentUrl = oLocation.sImageUrl;
+                  printArray(aExistingUrls);
+                  console.log(contains(aExistingUrls, sCurrentUrl));
+                  console.log(sCurrentUrl);
+                  if (!contains(aExistingUrls, sCurrentUrl)) {
+                    var sName = oLocation.sName;
+                    var aNamePart = sName.split(',');
+
+                    var sPoi = aNamePart[0];
+                    var sLocation = aNamePart[1] + ", " + aNamePart[2] + "," + aNamePart[3];
+                    
+
+                    oLocation.sPoi = sPoi;
+                    oLocation.sLocation = sLocation; 
+                    aExistingUrls.push(sCurrentUrl);
+                    aFinalResultLocation.push(oLocation);
+                  }
+                });
+
+                var iSliceTo = aFinalResultLocation.length > 6 ? 6 : aFinalResultLocation.length;
+                aFinalResultLocation = aFinalResultLocation.slice(0,iSliceTo);
+                // printArray(aFinalResultLocation);
+
+               
+                res.render('locations', {locations: aFinalResultLocation});
               }
             };
 
