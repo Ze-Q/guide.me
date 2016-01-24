@@ -2,10 +2,12 @@ var Location = require('../models/LocationModel.js');
 var _ = require('lodash');
 var User = require('../models/User');
 var stdio = require('stdio');
-var request = require("request")
+var request = require("request");
 
 exports.getLocations = function(req, res) {
   var token = _.find(req.user.tokens, { kind: 'facebook' });
+    var imagesToReport = [];
+    var keywordsToReport = [];
 
   var listOfPhotos = [];
   request('https://graph.facebook.com/v2.5/' + req.user.facebook + '/photos?access_token='
@@ -15,6 +17,7 @@ exports.getLocations = function(req, res) {
           for (var i = 0; i < parsedBody.data.length; i++) {
               listOfPhotos.push(parsedBody.data[i].source);
           }
+
           var Clarifai = require('../clarifai_node.js');
           Clarifai.initAPI(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
           // support some command-line options
@@ -93,6 +96,7 @@ exports.getLocations = function(req, res) {
               console.log(sortedArray);
               // var topTags = getTopNTagsAsString(sortedArray, 10);
               var topTags = getMiddleNTagsAsString(sortedArray, 10);
+
               console.log(topTags);
               getDestination(topTags);
             }
@@ -124,6 +128,7 @@ exports.getLocations = function(req, res) {
 
           function tagMultipleURL() {
             var urls = getUserUrls("");
+              imagesToReport = urls;
             var ourIds = new Array(urls.length);
             for (var i = 0; i < ourIds.length; i++) {
               ourIds[i] = i;
@@ -161,6 +166,7 @@ exports.getLocations = function(req, res) {
           }
 
           function getMiddleNTagsAsString(array, N) {
+              keywordsToReport = [];
             if (N > array.length)
                 throw new RangeError("More elements taken than available");
             var result = "";
@@ -171,6 +177,7 @@ exports.getLocations = function(req, res) {
               console.log("I: " + i);
               result += array[i][0];
               result += " ";
+              keywordsToReport.push(array[i]);
             }
             return result;
           }
@@ -301,8 +308,16 @@ exports.getLocations = function(req, res) {
                 aFinalResultLocation = aFinalResultLocation.slice(0,iSliceTo);
                 // printArray(aFinalResultLocation);
 
-               
-                res.render('locations', {locations: aFinalResultLocation});
+                console.log(imagesToReport);
+                console.log(keywordsToReport);
+
+                var keywordsAsString = "";
+                for (var i=0; i<keywordsToReport.length-1; i++) {
+                    keywordsAsString += keywordsToReport[i][0] + ", ";
+                }
+                  keywordsAsString += keywordsToReport[keywordsToReport.length-1][0];
+                console.log(keywordsAsString);
+                res.render('locations', {locations: aFinalResultLocation, imagesToReport: imagesToReport, keywordsToReport: keywordsAsString});
               }
             };
 

@@ -3,7 +3,6 @@ extends layout
 block content
     .page-header
         h3 View photos
-
-            a.btn.btn-success.pull-right(type='button' href="/findDestination") Find Destinations
+            a.btn.btn-success.pull-right(type='button' href="/locations") Find Destinations
     each image in images
         img(src= image width="150px" height="150px" style="margin:5px")

@@ -3,7 +3,7 @@ extends layout
 block content
   .page-header
     h3 All locations
-
+      a.btn.btn-success.pull-right(type='button' href="/locations") Retry
   .row
     each location in locations
       .col-md-4
@@ -16,6 +16,12 @@ block content
               p.price #{location.sPoi}
               |         
               a.button(href='#') Get it
-        |   
-    
-    
+  hr
+  .page-header
+    h3 Images Used
+  each image in imagesToReport
+    img(src= image width="150px" height="150px" style="margin:5px")
+  hr
+  .page-header
+    h3 Keywords Used
+  p #{keywordsToReport}
