@@ -133,7 +133,7 @@ function tagMultipleURL() {
   for (var i = 0; i < ourIds.length; i++) {
     ourIds[i] = i;
   }
-  Clarifai.tagURL( urls , ourIds, commonResultHandler );
+  Clarifai.tagURL(urls , ourIds, commonResultHandler);
 }
 
 function getRandom(arr, n) {
@@ -261,6 +261,11 @@ function parseExpediaResponse(oResponse) {
     }
   };
 
+  if (!aLocations) {
+    tagMultipleURL()
+    console.log("Error: aLocations is undefined");
+    return;
+  }
   aLocations.forEach(function(location, index) {
     requestCall(location.sImageUrl, fnGetImageInfoSuccess, index);
   })
