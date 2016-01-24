@@ -12,7 +12,7 @@ var sQuery3 = "indoors "+"window "+"interior design "+"furniture "+"no person "+
 var sQuery4 = "architecture winter snow outdoors travel church religion no person sky traditional building cross cold Christmas old tourism Orthodox landmark spirituality city";
 var sQuery5 = "vehicle people competition race group festival many group transportation system adult man track race rally auto racing championship action road woman hurry"
 
-var sFinalQuery = sExpediaRequestRoot + sQuery5 + sCompleteKey
+var sFinalQuery = sExpediaRequestRoot + sQuery4 + sCompleteKey
 
 function printArray(array) {
   array.forEach(function(element) {
@@ -52,7 +52,7 @@ function requestCall(sUrl, fnCallback, index) {
 }
 
 function getPanoramioQuery(iLatitude, iLongitude) {
-  var iThhold = 0.05;
+  var iThhold = 0.003;
   var iMinx = iLongitude - iThhold;
   var iMaxx = iLongitude + iThhold;
   var iMiny = iLatitude - iThhold;
