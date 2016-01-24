@@ -13,7 +13,7 @@ exports.getPhoto = function(req, res, next) {
             for (var i = 0; i < parsedBody.data.length; i++) {
                 listOfPhotos.push(parsedBody.data[i].source);
             }
-            res.send(JSON.stringify(listOfPhotos));
+            res.render('photos', {images: listOfPhotos});
         }
     });
 };
