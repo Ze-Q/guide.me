@@ -83,7 +83,8 @@ function commonResultHandler( err, res ) {
     var sortedArray = sortMapByValue(map);
     console.log(map);
     console.log(sortedArray);
-    var topTags = getTopNTagsAsString(sortedArray, 10);
+    // var topTags = getTopNTagsAsString(sortedArray, 10);
+    var topTags = getMiddleNTagsAsString(sortedArray, 10);
     console.log(topTags);
     getDestination(topTags);
   }
@@ -135,18 +136,44 @@ function tagMultipleURL() {
   Clarifai.tagURL( urls , ourIds, commonResultHandler );
 }
 
+function getRandom(arr, n) {
+    var result = new Array(n),
+        len = arr.length,
+        taken = new Array(len);
+    if (n > len)
+        throw new RangeError("getRandom: more elements taken than available");
+    while (n--) {
+        var x = Math.floor(Math.random() * len);
+        result[n] = arr[x in taken ? taken[x] : x];
+        taken[x] = --len;
+    }
+    return result;
+}
+
 function getUserUrls(user_token) {
   var urls = require("./test.json");
-  var half_length = Math.ceil(urls.length / 2);
-
-  var leftSide = urls.splice(0,half_length);
-  return leftSide;
+  return getRandom(urls, 10);
 }
 
 function getTopNTagsAsString(array, N) {
   var result = "";
   console.log(array.length);
   for (var i = 0; i < N && i < array.length; i++) {
+    result += array[i][0];
+    result += " ";
+  }
+  return result;
+}
+
+function getMiddleNTagsAsString(array, N) {
+  if (N > array.length)
+      throw new RangeError("More elements taken than available");
+  var result = "";
+  var half_length = array.length / 2;
+  var half_N = N / 2;
+  console.log("ARRAY LENGTH" + array.length);
+  for (var i = half_length - half_N; i < half_length + half_N; i++) {
+    console.log("I: " + i);
     result += array[i][0];
     result += " ";
   }
@@ -182,6 +209,7 @@ function getNames(aElement) {
 
 function parseExpediaResponse(oResponse) {
   var oResponseResult = oResponse.result;
+  console.log(oResponseResult);
   if (oResponseResult.pois !== undefined) {
     // console.log(oResponseResult.pois);
     getNames(oResponseResult.pois);
