@@ -189,10 +189,10 @@ function getUserUrls(user_token) {
 
 
 
-// exampleTagSingleURL();
-tagMultipleURL();
-// exampleFeedback();
-Clarifai.clearThrottleHandler();
+// // exampleTagSingleURL();
+// tagMultipleURL();
+// // exampleFeedback();
+// Clarifai.clearThrottleHandler();
 
 
 var sExpediaKey = "Rb4v7KFeKxU0bTOjqFg9kDTrzZgSQpWc";
@@ -206,7 +206,7 @@ var sQuery4 = "architecture winter snow outdoors travel church religion no perso
 var sQuery5 = "vehicle people competition race group festival many group transportation system adult man track race rally auto racing championship action road woman hurry"
 
 var sFinalQuery = sExpediaRequestRoot + sQuery5 + sCompleteKey
-console.log(sFinalQuery);
+// console.log(sFinalQuery);
 
 function printArray(array) {
   array.forEach(function(element) {
@@ -214,22 +214,49 @@ function printArray(array) {
   });
 }
 
-function getNames(aElement) {
-  var aName = aElement.map(function(aElement){
-    return aElement.name;
+function getIdNamesAndCoordinates(aPlace) {
+  // TODO: clusters
+  var aLocations = [];
+  aPlace.forEach(function(oPlace) {
+    var oLocation = {};
+    oLocation.sid = oPlace.id;
+    oLocation.sName = oPlace.name;
+    // if (oLocation.center !== undefined) {
+      var iLatitude = oPlace.center.lat;
+      var iLongitude = oPlace.center.lng;
+
+      oLocation.sImageUrl = getPanoramioQuery(iLatitude, iLongitude);
+    // }
+    aLocations.push(oLocation);
   });
-  printArray(aName);
+  // printArray(aLocations);
+
+  return aLocations;
+}
+
+
+function requestCall(sUrl, fnCallback, index) {
+    request({
+     url: sUrl,
+     json: true
+  }, function (error, response, body) {
+     if (!error && response.statusCode === 200) {
+        fnCallback(body, index);
+     }
+  })
 }
 
 function parseExpediaResponse(oResponse) {
   var oResponseResult = oResponse.result;
+  var aLocations = undefined;
+  var iCounter = 0;
   if (oResponseResult.pois !== undefined) {
     // console.log(oResponseResult.pois);
-    getNames(oResponseResult.pois);
+    aLocations = getIdNamesAndCoordinates(oResponseResult.pois);
   }
   else if (oResponseResult.regions !== undefined) {
     // console.log(oResponseResult.pois);
-    getNames(oResponseResult.regions);
+    aLocations = getIdNamesAndCoordinates(oResponseResult.regions);
   }
   else if (oResponseResult.clusters !== undefined) {
     // console.log(oResponseResult.pois);
@@ -237,17 +264,43 @@ function parseExpediaResponse(oResponse) {
   else {
     console.log("Error");
   }
+
+  var fnGetImageInfoSuccess = function(oImageInfo, index) {
+    // console.log(oImageInfo.photos[0].photo_file_url);
+    aLocations[index].sImageUrl = oImageInfo.photos[0].photo_file_url;
+    iCounter++;
+    if (iCounter === aLocations.length) {
+      printArray(aLocations);
+    }
+  };
+
+  aLocations.forEach(function(location, index) {
+    requestCall(location.sImageUrl, fnGetImageInfoSuccess, index);
+  })
 }
 
-request({
-   url: sFinalQuery,
-   json: true
-}, function (error, response, body) {
-   if (!error && response.statusCode === 200) {
-      // console.log(body.result.pois) // Print the json response
-      parseExpediaResponse(body);
-   }
-})
+function getPanoramioQuery(iLatitude, iLongitude) {
+  var iThhold = 0.05;
+  var iMinx = iLongitude - iThhold;
+  var iMaxx = iLongitude + iThhold;
+  var iMiny = iLatitude - iThhold;
+  var iMaxy = iLatitude + iThhold;
+
+  var queryPanoramioRoot = "http://www.panoramio.com/map/get_panoramas.php?order=popularity&set=public&from=0&to=1"
+    + "&minx=" + iMinx + "&miny=" + iMiny + "&maxx=" + iMaxx + "&maxy=" + iMaxy; 
+    // ??&callback=MyCallback";
+  return queryPanoramioRoot;
+}
+
+// console.log(getPanoramioQuery(45.5017, -73.5673));
+// Expedia requests
+requestCall(sFinalQuery, parseExpediaResponse);
+
+
+
+
+
+
 
 
 
