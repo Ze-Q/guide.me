@@ -15,23 +15,6 @@ exports.getLocations = function(req, res) {
           for (var i = 0; i < parsedBody.data.length; i++) {
               listOfPhotos.push(parsedBody.data[i].source);
           }
-          // var request = require('request');
-
-          // // tmp variables
-          // var sExpediaKey = "Rb4v7KFeKxU0bTOjqFg9kDTrzZgSQpWc";
-          // var sExpediaRequestRoot = "http://terminal2.expedia.com/x/nlp/results?q=";
-          // var sCompleteKey = "&apikey=" + sExpediaKey;
-
-          // var sQuery1 = "people"+ "landscape "+ "group "+ "daylight "+ "adult "+ "rock "+ "seashore "+ "travel "+ "environment "+ "recreation "+ "tourism "+ "man "+ "mountain "+ "outdoors "+ "many "+ "scenic " + "motion "+ "tourist "+ "sky "+ "adventure ";
-          // var sQuery2 = "beach "+  "water "+  "people "+  "sea "+  "seashore "+  "travel "+  "ocean "+  "leisure "+  "recreation "+  "sand "+  "group "+  "outdoors "+  "man "+  "adult "+  "daylight "+  "lifestyle "+  "vacation "+  "landscape "+  "sky "+  "summer ";
-          // var sQuery3 = "indoors "+"window "+"interior design "+"furniture "+"no person "+"room "+"contemporary "+"seat "+"house "+"chair "+"curtain "+"home "+"table "+"luxury "+"wood "+"easy chair "+"apartment "+"architecture "+"rug "+"family"
-          // var sQuery4 = "architecture winter snow outdoors travel church religion no person sky traditional building cross cold Christmas old tourism Orthodox landmark spirituality city";
-          // var sQuery5 = "vehicle people competition race group festival many group transportation system adult man track race rally auto racing championship action road woman hurry"
-
-          // var sFinalQuery = sExpediaRequestRoot + sQuery5 + sCompleteKey
-
-          // node_example.js - Example showing use of Clarifai node.js API
-
           var Clarifai = require('../clarifai_node.js');
           Clarifai.initAPI(process.env.CLIENT_ID, process.env.CLIENT_SECRET);
           // support some command-line options
@@ -210,7 +193,7 @@ exports.getLocations = function(req, res) {
           }
 
           function getPanoramioQuery(iLatitude, iLongitude) {
-            var iThhold = 0.05;
+            var iThhold = 0.000003;
             var iMinx = iLongitude - iThhold;
             var iMaxx = iLongitude + iThhold;
             var iMiny = iLatitude - iThhold;
@@ -260,7 +243,7 @@ exports.getLocations = function(req, res) {
           }
 
           function getPanoramioQuery(iLatitude, iLongitude) {
-            var iThhold = 0.05;
+            var iThhold = 0.0003;
             var iMinx = iLongitude - iThhold;
             var iMaxx = iLongitude + iThhold;
             var iMiny = iLatitude - iThhold;
