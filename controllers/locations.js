@@ -3,6 +3,7 @@ var _ = require('lodash');
 var User = require('../models/User');
 var stdio = require('stdio');
 var request = require("request");
+var S = require('string');
 
 exports.getLocations = function(req, res) {
   var token = _.find(req.user.tokens, { kind: 'facebook' });
@@ -294,11 +295,25 @@ exports.getLocations = function(req, res) {
                     var aNamePart = sName.split(',');
 
                     var sPoi = aNamePart[0];
-                    var sLocation = aNamePart[1] + ", " + aNamePart[2] + "," + aNamePart[3];
+                    var sLocation = aNamePart[1];
                     
+                    if (aNamePart[2] !== undefined) {
+                      sLocation += ", " + aNamePart[2]; 
+                    }
+
+                    if (aNamePart[3] !== undefined) {
+                      sLocation += ", " + aNamePart[3]; 
+                    }
+
+                    // sLocation = sLocation.replace(",undefined", "");
+                    sLocation = S(sLocation).replaceAll(',undefined', '').s
 
                     oLocation.sPoi = sPoi;
                     oLocation.sLocation = sLocation; 
+                    var goUrl = "https://www.ca.kayak.com/hotels/" + aNamePart[1] + "," + aNamePart[2] + "/2016-02-01/2016-03-01/2guests"
+                    
+                    oLocation.goUrl = S(goUrl).replaceAll(' ', '').s
+                    console.log(oLocation.goUrl);
                     aExistingUrls.push(sCurrentUrl);
                     aFinalResultLocation.push(oLocation);
                   }
@@ -306,7 +321,6 @@ exports.getLocations = function(req, res) {
 
                 var iSliceTo = aFinalResultLocation.length > 6 ? 6 : aFinalResultLocation.length;
                 aFinalResultLocation = aFinalResultLocation.slice(0,iSliceTo);
-                // printArray(aFinalResultLocation);
 
                 console.log(imagesToReport);
                 console.log(keywordsToReport);
