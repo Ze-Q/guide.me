@@ -313,6 +313,7 @@ exports.getLocations = function(req, res) {
                     var goUrl = "https://www.ca.kayak.com/hotels/" + aNamePart[1] + "," + aNamePart[2] + "/2016-02-01/2016-03-01/2guests"
                     
                     oLocation.goUrl = S(goUrl).replaceAll(' ', '').s
+                    
                     console.log(oLocation.goUrl);
                     aExistingUrls.push(sCurrentUrl);
                     aFinalResultLocation.push(oLocation);
