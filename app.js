@@ -36,6 +36,7 @@ var userController = require('./controllers/user');
 var apiController = require('./controllers/api');
 var contactController = require('./controllers/contact');
 var searchController = require('./controllers/search');
+var locationsController = require('./controllers/locations');
 
 /**
  * API keys and Passport configuration.
@@ -130,6 +131,8 @@ app.get('/account/unlink/:provider', passportConf.isAuthenticated, userControlle
 
 app.get('/getPhotos', passportConf.isAuthenticated, searchController.getPhoto);
 
+// location route
+app.get('/locations', locationsController.getLocations);
 /**
  * API examples routes.
  */
